@@ -26,6 +26,7 @@ class Dictionary:
             self.__table[existing_bucket].value = value
         elif self.__len__() >= self.__buckets * Dictionary.LOAD_FACTOR:
             self._increase_capacity()
+            bucket = self._find_empty_bucket(key)
             self.__table[bucket] = Node(
                 key=key,
                 item_hash=hash(key),
