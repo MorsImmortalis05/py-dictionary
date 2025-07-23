@@ -24,7 +24,7 @@ class Dictionary:
         bucket = self._find_empty_bucket(key)
         if existing_bucket is not None:
             self.__table[existing_bucket].value = value
-        elif self.__len__() >= self.__buckets * Dictionary.LOAD_FACTOR:
+        elif len(self) >= self.__buckets * Dictionary.LOAD_FACTOR:
             self._increase_capacity()
             bucket = self._find_empty_bucket(key)
             self.__table[bucket] = Node(
@@ -46,20 +46,14 @@ class Dictionary:
         return self.__table[index].value
 
     def __len__(self) -> int:
-        result = 0
-        for i in self.__table:
-            if isinstance(i, Node):
-                result += 1
-        return result
+        return sum(1 for item in self.__table if isinstance(item, Node))
 
     def _find_bucket_index(self, key: Hashable) -> int:
-        key_hash = hash(key)
-        bucket_index = key_hash % len(self.__table)
-        return bucket_index
+        return hash(key) % len(self.__table)
 
     def _find_empty_bucket(self, key: Hashable) -> Union[int, None]:
         bucket_index = self._find_bucket_index(key)
-        for i in range(len(self.__table)):
+        for _ in range(len(self.__table)):
             if self.__table[bucket_index] is None:
                 return bucket_index
             bucket_index += 1
