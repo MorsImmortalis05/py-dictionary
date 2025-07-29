@@ -18,6 +18,7 @@ class Dictionary:
     def __init__(self, buckets: int = INITIAL_CAPACITY) -> None:
         self.__buckets = buckets
         self.__table = [None] * buckets
+        self.__size = 0
 
     def __setitem__(self, key: Hashable, value: Any) -> None:
         existing_bucket = self._find_existing_bucket(key)
@@ -38,6 +39,7 @@ class Dictionary:
                 item_hash=hash(key),
                 value=value
             )
+        self.__size += 1
 
     def __getitem__(self, key: Hashable) -> Any:
         index = self._find_existing_bucket(key=key)
@@ -62,9 +64,13 @@ class Dictionary:
         return None
 
     def _find_existing_bucket(self, key: Hashable) -> Union[int, None]:
+        item_hash = hash(key)
         bucket_index = self._find_bucket_index(key)
         while self.__table[bucket_index] is not None:
-            if self.__table[bucket_index].key == key:
+            if (
+                    hash(self.__table[bucket_index].key) == item_hash
+                    and self.__table[bucket_index].key == key
+            ):
                 return bucket_index
             bucket_index += 1
             if bucket_index >= len(self.__table):
